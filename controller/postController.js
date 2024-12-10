@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await prisma.post.findMany({ include: { author: true } });
+    const posts = await prisma.post.findMany({ include: { author: false } });
     res.status(200).json(posts);
   } catch (err) {
     console.error(err);
@@ -28,18 +28,36 @@ exports.getPostById = async (req, res) => {
   }
 };
 
+
 exports.createPost = async (req, res) => {
-  const { title, content, authorId } = req.body;
-  try {
-    const newPost = await prisma.post.create({
-      data: { title, content, authorId: parseInt(authorId) },
-    });
-    res.status(201).json(newPost);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Gagal membuat postingan' });
-  }
-};
+    const { title, content } = req.body; // Tidak perlu authorId di body
+    try {
+      const newPost = await prisma.post.create({
+        data: {
+          title,
+          content,
+          authorId: req.user.userId, // Ambil authorId dari JWT
+        },
+      });
+      res.status(201).json(newPost);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Gagal membuat postingan' });
+    }
+  };
+  
+// exports.createPost = async (req, res) => {
+//   const { title, content, authorId } = req.body;
+//   try {
+//     const newPost = await prisma.post.create({
+//       data: { title, content, authorId: parseInt(authorId) },
+//     });
+//     res.status(201).json(newPost);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Gagal membuat postingan' });
+//   }
+// };
 
 exports.updatePost = async (req, res) => {
   const { id } = req.params;
@@ -66,3 +84,5 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ error: 'Gagal menghapus postingan' });
   }
 };
+
+exports.getAllPostByAuthorId =  async

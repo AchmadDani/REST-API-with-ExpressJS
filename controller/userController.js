@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { hashPassword } = require('../utils/hashUtils');
 
 exports.getAllUsers = async (req, res) => {
     try {
@@ -27,8 +28,9 @@ exports.getUserById = async (req, res) => {
 exports.createUser = async (req, res) => {
     const {name, email, password} = req.body;
     try {
+        const hashedPassword = await hashPassword(password);
         const user = await prisma.user.create({
-            data: {name, email, password}
+            data: {name, email, password: hashedPassword}
         })
         res.status(201).json(user);
     } catch (err) {

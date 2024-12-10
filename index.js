@@ -5,6 +5,9 @@ const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 require('dotenv').config();
 
+const authRoutes = require('./routes/authRoutes');
+
+
 const app = express();
 const port  = 3000;
 
@@ -17,6 +20,7 @@ app.use(bodyParser.json());
 // Routes
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
+app.use('/auth', authRoutes);
 
 //Test endpoint
 app.get('/', async (req, res) => {
